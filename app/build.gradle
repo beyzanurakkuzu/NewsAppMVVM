@@ -1,0 +1,133 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    id "androidx.navigation.safeargs.kotlin"
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
+    id 'com.google.gms.google-services'
+}
+
+def Dev = "News App"
+def Prod = "News App Prod"
+android {
+    namespace 'com.breezy.newsapp'
+    compileSdk 33
+
+    signingConfigs {
+        dev {
+            storeFile file("../config/demoJks")
+            storePassword 'demo1212'
+            keyAlias 'key0'
+            keyPassword 'demo1212'
+        }
+        prod {
+            storeFile file("../config/demoJks")
+            storePassword 'demo1212'
+            keyAlias 'key0'
+            keyPassword 'demo1212'
+        }
+    }
+
+    defaultConfig {
+        applicationId "com.breezy.newsapp"
+        minSdk 23
+        targetSdk 33
+        versionCode 1063
+        versionName "1.0.0"
+
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        flavorDimensions "environment"
+    }
+    buildTypes {
+        debug {
+            zipAlignEnabled true
+
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.prod
+        }
+    }
+
+    productFlavors {
+        dev {
+            applicationId "com.breezy.newsapp.dev"
+            applicationIdSuffix ".dev"
+            dimension "environment"
+            resValue "string", "env_name", Dev
+            manifestPlaceholders = [appLabel: Dev]
+
+            buildConfigField 'String', 'BASE_URL', "\"https://newsapi.org\""
+        }
+        prod {
+            applicationId "com.breezy.newsapp"
+            resValue "string", "env_name", Prod
+            manifestPlaceholders = [appLabel: Prod]
+
+            buildConfigField 'String', 'BASE_URL', "\"https://newsapi.org\""
+        }
+    }
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/services/javax.annotation.processing.Processor']
+        }
+    }
+
+
+    buildFeatures {
+        viewBinding true
+        dataBinding true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    implementation "com.google.dagger:hilt-android:2.46"
+    kapt "com.google.dagger:hilt-compiler:2.46"
+
+    implementation "androidx.room:room-runtime:2.5.0"
+    implementation "androidx.room:room-ktx:2.5.0"
+    kapt "androidx.room:room-compiler:2.5.0"
+
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.10.0"
+
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
+
+    implementation "com.github.bumptech.glide:glide:4.14.2"
+    annotationProcessor "com.github.bumptech.glide:compiler:4.14.2"
+
+    implementation "androidx.navigation:navigation-fragment-ktx:2.5.3"
+    implementation "androidx.navigation:navigation-ui-ktx:2.5.3"
+
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    //Chucker
+    //https://github.com/ChuckerTeam/chucker
+    debugImplementation("com.github.chuckerteam.chucker:library:3.5.2")
+    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:3.5.2")
+}
